@@ -1,0 +1,5 @@
+tensorflow
+tensorflow[and-cuda]
+transformers
+flask
+redis

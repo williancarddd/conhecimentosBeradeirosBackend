@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model Comunidade {
+  id Int @id @default(autoincrement())
+  nome String
+  latitude Float?
+  longitude Float?
+  descricao String
+  populacao BigInt?
+  textos_coletados TextoColetado[]
+
+  @@map("comunidades")
+}
+
+model Categoria {
+  id Int @id @default(autoincrement())
+  descricao String
+  textos_coletados TextoColetado[]
+
+  @@map("categorias")
+}
+
+model TextoColetado {
+  id Int @id @default(autoincrement())
+  descricao String
+  comunidade Comunidade? @relation(fields: [comunidadeId], references: [id])
+  comunidadeId Int?
+  fonteInformacao FonteInformacao? @relation(fields: [fonteId], references: [id])
+  fonteId Int
+  data_coletado DateTime @default(now())
+  palavraChaves TextoPalavraChave[]
+  categoria Categoria? @relation(fields: [categoriaId], references: [id])
+  categoriaId Int?
+
+  @@map("textos_coletados")
+}
+
+model FonteInformacao {
+  id Int @id @default(autoincrement())
+  nome String
+  url String?
+  descricao String?
+  textos_coletados TextoColetado[]
+
+  @@map("fontes_informacao")
+}
+
+model TextoPalavraChave {
+  id Int @id @default(autoincrement())
+  textoColetado TextoColetado @relation(fields: [textoColetadoId], references: [id])
+  textoColetadoId Int
+  palavraChave String
+
+  @@map("textos_palavras_chave")
+}
