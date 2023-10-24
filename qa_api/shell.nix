@@ -8,6 +8,7 @@ mkShell {
   packages = with pkgs; [
     python39
     pyright
+    python39Packages.autopep8
   ];
 
   shellHook = ''
