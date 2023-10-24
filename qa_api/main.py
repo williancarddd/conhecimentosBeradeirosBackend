@@ -2,34 +2,18 @@ from transformers import pipeline
 import json
 from api_settings import app, cache
 from flask import request
+from ia import question_answer
+from unidecode import unidecode
 
-model_name = 'pierreguillou/bert-base-cased-squad-v1.1-portuguese'
-nlp = pipeline("question-answering", model=model_name)
+keywords = []
 
-def question_answer(question, context):
-    result = nlp(question=question, context=context)
-    i = 0
+with open('keywords.json') as file:
+    keywords = json.load(file)
 
-    answer = ""
-
-    while context[result["start"] - i] != '.':
-        i += 1
-
-    answer += context[result["start"] - i + 2:result["start"]]
-    i = 0
-
-    while context[result["start"] + i] != '.':
-        i += 1
-
-    answer += context[result["start"]:result["start"] + i]
-
-    return {
-        "question": question,
-        "sentence": answer
-    }
-
-def get_context():
-    return ""
+def get_context(question):
+    for keyword in keywords:
+        if keyword in unidecode(question.lower()):
+            return keywords[keyword]["context"]
 
 # Rota para fazer perguntas
 @app.route("/perguntar", methods=['POST'])
@@ -41,9 +25,9 @@ def ask_question():
 
     questions = data["questions"]
     results = []
-    context = get_context()
     for question in questions:
-      results.append(question_answer(question, context))
+        context = get_context(question)
+        results.append(question_answer(question, context))
     return json.dumps(results)
 
 if __name__ == "__main__":
