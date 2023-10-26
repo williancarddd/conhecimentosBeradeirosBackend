@@ -1,23 +1,25 @@
-from transformers import pipeline
 import json
-from api_settings import app, cache
+import os
+from api_settings import app
 from flask import request
 from unidecode import unidecode
 from ia import question_answer
+from database import Database
+from dotenv import load_dotenv
 
-keywords = []
+load_dotenv()
 
-with open("context.json") as file:
-    keywords = json.load(file)
+DB_PATH = os.getenv("DB_PATH")
+
+db = Database(DB_PATH)
 
 
-def get_context(question):
+def get_context(question, comunidade, keywords):
     for keyword in keywords:
-        for item in keywords[keyword]["keywords"]:
-            if item in unidecode(question.lower()):
-                return keywords[keyword]["context"]
-            else:
-                return keywords["geral"]["context"]
+        if keyword in unidecode(question.lower()):
+            return db.get_context_from_keyword(comunidade, keyword)
+        else:
+            return db.get_context_from_keyword(comunidade, "geral")
 
 
 # Rota para fazer perguntas
@@ -32,13 +34,20 @@ def ask_question():
     results = []
 
     for question in questions:
+        comunidade = ""
+        if "comunidade" in data:
+            comunidade = data["comunidade"]
+        else:
+            return json.dumps({"error": "A chave 'comunidade' está ausente nos dados enviados."}), 400
+        keywords = db.get_keywords(comunidade)
         if "keyword" in data:
             if data["keyword"] in keywords:
-                context = keywords[data["keyword"]]["context"]
+                context = db.get_context_from_keyword(
+                    data["keyword"], comunidade)
             else:
                 return json.dumps({"error": f"A keyword '{data['keyword']}' não existe."}), 400
         else:
-            context = get_context(question)
+            context = get_context(question, comunidade, keywords)
         results.append(question_answer(question, context))
 
     return json.dumps(results)
