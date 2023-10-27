@@ -28,34 +28,32 @@ def get_context(question, comunidade):
 @app.route("/perguntar", methods=['POST'])
 def ask_question():
     data = request.get_json()
-    if "questions" not in data:
-        return json.dumps({"error": "A chave 'questions' está ausente nos dados enviados."}), 400
+    if "question" not in data:
+        return json.dumps({"error": "A chave 'question' está ausente nos dados enviados."}), 400
 
-    questions = data["questions"]
+    question = data["question"]
 
-    results = []
+    comunidade = ""
+    if "comunidade" in data:
+        comunidade = data["comunidade"]
+    else:
+        return json.dumps({"error": "A chave 'comunidade' está ausente nos dados enviados."}), 400
 
-    for question in questions:
-        comunidade = ""
-        if "comunidade" in data:
-            comunidade = data["comunidade"]
+    categorias = db.get_categorias(comunidade)
+
+    if "categoria" not in data or data["categoria"] == "":
+        context = get_context(question, comunidade)
+    else:
+        if data["categoria"] in categorias:
+            context = db.get_context_from_categoria(
+                data["categoria"], comunidade)
         else:
-            return json.dumps({"error": "A chave 'comunidade' está ausente nos dados enviados."}), 400
-
-        categorias = db.get_categorias(comunidade)
-
-        if "categoria" in data:
-            if data["categoria"] in categorias:
-                context = db.get_context_from_categoria(
-                    data["categoria"], comunidade)
-            else:
-                return json.dumps({"error": f"A categoria '{data['keyword']}' não existe."}), 400
-        else:
-            context = get_context(question, comunidade)
-        if context:
-            results.append(question_answer(question, context))
-
-    return json.dumps(results)
+            return json.dumps({"error": f"A categoria '{data['keyword']}' não existe."}), 400
+    if context:
+        result = question_answer(question, context)
+        return json.dumps(result)
+    else:
+        return json.dumps({"sentence": "Não foi possivel encontrar a resposta para sua pergunta"})
 
 
 if __name__ == "__main__":
