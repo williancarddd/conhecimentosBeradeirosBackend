@@ -14,12 +14,13 @@ DB_PATH = os.getenv("DB_PATH")
 db = Database(DB_PATH)
 
 
-def get_context(question, comunidade, keywords):
+def get_context(question, comunidade):
+    keywords = db.get_keywords(comunidade)
     for keyword in keywords:
         if keyword in unidecode(question.lower()):
             return db.get_context_from_keyword(comunidade, keyword)
         else:
-            return db.get_context_from_keyword(comunidade, "geral")
+            return db.get_context_from_categoria(comunidade, "Geral")
 
 
 # Rota para fazer perguntas
@@ -39,15 +40,17 @@ def ask_question():
             comunidade = data["comunidade"]
         else:
             return json.dumps({"error": "A chave 'comunidade' está ausente nos dados enviados."}), 400
-        keywords = db.get_keywords(comunidade)
-        if "keyword" in data:
-            if data["keyword"] in keywords:
-                context = db.get_context_from_keyword(
-                    data["keyword"], comunidade)
+
+        categorias = db.get_categorias(comunidade)
+
+        if "categoria" in data:
+            if data["categoria"] in categorias:
+                context = db.get_context_from_categoria(
+                    data["categoria"], comunidade)
             else:
                 return json.dumps({"error": f"A keyword '{data['keyword']}' não existe."}), 400
         else:
-            context = get_context(question, comunidade, keywords)
+            context = get_context(question, comunidade)
         results.append(question_answer(question, context))
 
     return json.dumps(results)
