@@ -42,11 +42,11 @@ def ask_question():
         print(result)
         return result
 
-    categorias = db.get_categorias(comunidade)
 
     if "categoria" not in data or data["categoria"] == "":
         context = get_context(question, comunidade)
     else:
+        categorias = db.get_categorias(comunidade)
         if data["categoria"] in categorias:
             context = db.get_context_from_categoria(
                 data["categoria"], comunidade)
