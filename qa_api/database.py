@@ -9,44 +9,46 @@ class Database(object):
 
     def get_context_from_categoria(self, categoria, comunidade):
         return ' '.join(sum(self.cursor.execute(f"""
-                                SELECT tc.descricao AS descricao_texto_coletado
-                                FROM textos_coletados AS tc
-                                JOIN categorias AS cat ON tc.categoriaId = cat.id
-                                JOIN comunidades AS c ON tc.comunidadeId = c.id
-                                WHERE cat.descricao = '{categoria}'
-                                AND c.nome = '{comunidade}';
+                                SELECT tc.descricao
+                                FROM textos_coletados tc
+                                JOIN categorias c ON tc.comunidadeId = c.comunidadeId
+                                JOIN comunidades com ON c.comunidadeId = com.id
+                                WHERE com.nome = '{comunidade}' AND c.descricao = '{categoria}';
                                 """).fetchall(), ()))
 
     def get_context_from_keyword(self, keyword, comunidade):
         return " ".join(sum(self.cursor.execute(f"""
-                                SELECT tc.descricao AS context
+                                SELECT tc.descricao
                                 FROM textos_coletados AS tc
-                                JOIN textos_palavras_chave AS tpc ON tc.id = tpc.textoColetadoId
-                                JOIN comunidades AS c ON tc.comunidadeId = c.id
-                                WHERE tpc.palavraChave = '{keyword}' AND c.nome = '{comunidade}';
+                                JOIN textos_coletados_categorias AS tcc ON tc.id = tcc.textoColetadoId
+                                JOIN textos_palavras_chave AS tpc ON tcc.categoriaId = tpc.categoriaId
+                                JOIN categorias AS cat ON tcc.categoriaId = cat.id
+                                JOIN comunidades AS com ON cat.comunidadeId = com.id
+                                WHERE tpc.palavraChave = '{keyword}'
+                                AND com.nome = '{comunidade}';
                                 """).fetchall(), ()))
 
     def get_categorias(self, comunidade):
         return sum(self.cursor.execute(f"""
-                                SELECT DISTINCT cat.descricao AS categoria
+                                SELECT cat.descricao
                                 FROM categorias AS cat
-                                JOIN textos_coletados AS tc ON cat.id = tc.categoriaId
-                                JOIN comunidades AS c ON tc.comunidadeId = c.id
-                                WHERE c.nome = '{comunidade}';
+                                JOIN comunidades AS com ON cat.comunidadeId = com.id
+                                WHERE com.nome = '{comunidade}';
                                 """).fetchall(), ())
 
     def get_keywords(self, comunidade):
         return sum(self.cursor.execute(f"""
-                                SELECT tp.palavraChave FROM comunidades as d
-                                JOIN textos_coletados AS t ON t.comunidadeId = d.id
-                                JOIN textos_palavras_chave AS tp ON tp.textoColetadoId = t.id
-                                WHERE d.nome = '{comunidade}'
+                                SELECT tpc.palavraChave
+                                FROM textos_palavras_chave AS tpc
+                                JOIN categorias AS c ON c.id = tpc.id
+                                JOIN comunidades AS com ON com.id = c.comunidadeId
+                                where com.nome = '{comunidade}';
                                 """).fetchall(), ())
 
 
 if __name__ == "__main__":
     db = Database('../app_api/database/dev.db')
-    print(db.get_context_from_categoria("História", "Comunidade de Nazaré"))
-    print(db.get_context_from_keyword("habitantes", "Comunidade de Nazaré"))
+    print(db.get_context_from_categoria("Geral", "Comunidade de Nazaré"))
+    print(db.get_context_from_keyword("fe", "Comunidade de Nazaré"))
     print(db.get_categorias("Comunidade de Nazaré"))
     print(db.get_keywords("Comunidade de Nazaré"))

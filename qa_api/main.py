@@ -30,7 +30,8 @@ def get_context(question, comunidade):
 def ask_question():
     data = request.get_json()
     if "question" not in data:
-        result = json.dumps({"error": "A chave 'question' está ausente nos dados enviados."}), 400
+        result = json.dumps(
+            {"error": "A chave 'question' está ausente nos dados enviados."}), 400
         print(result)
         return result
 
@@ -40,10 +41,10 @@ def ask_question():
     if "comunidade" in data:
         comunidade = data["comunidade"]
     else:
-        result = json.dumps({"error": "A chave 'comunidade' está ausente nos dados enviados."}), 400
+        result = json.dumps(
+            {"error": "A chave 'comunidade' está ausente nos dados enviados."}), 400
         print(result)
         return result
-
 
     if "categoria" not in data or data["categoria"] == "":
         print("categoria not in data")
@@ -54,7 +55,8 @@ def ask_question():
             context = db.get_context_from_categoria(
                 data["categoria"], comunidade)
         else:
-            result = json.dumps({"error": f"A categoria '{data['keyword']}' não existe."}), 400
+            result = json.dumps(
+                {"error": f"A categoria '{data['keyword']}' não existe."}), 400
             print(result)
             return result
     if context:
@@ -62,7 +64,8 @@ def ask_question():
         print(result)
         return result
     else:
-        result = json.dumps({"sentence": "Não foi possivel encontrar a resposta para sua pergunta"})
+        result = json.dumps(
+            {"sentence": "Não foi possivel encontrar a resposta para sua pergunta"})
         print(result)
         return result
 
