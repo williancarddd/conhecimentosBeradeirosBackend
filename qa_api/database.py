@@ -38,9 +38,9 @@ class Database(object):
 
     def get_keywords(self, comunidade):
         return sum(self.cursor.execute(f"""
-                                SELECT tpc.palavraChave
+                                SELECT DISTINCT tpc.palavraChave
                                 FROM textos_palavras_chave AS tpc
-                                JOIN categorias AS c ON c.id = tpc.id
+                                JOIN categorias AS c
                                 JOIN comunidades AS com ON com.id = c.comunidadeId
                                 where com.nome = '{comunidade}';
                                 """).fetchall(), ())
