@@ -26,7 +26,10 @@ model Comunidade {
 model Categoria {
   id Int @id @default(autoincrement())
   descricao String
-  textos_coletados TextoColetado[]
+  textos_palavras_chave TextoPalavraChave[]
+  textos_coletados_categorias TextosColetadosCategorias[]
+  comunidade Comunidade? @relation(fields: [comunidadeId], references: [id])
+  comunidadeId Int?
 
   @@map("categorias")
 }
@@ -39,9 +42,7 @@ model TextoColetado {
   fonteInformacao FonteInformacao? @relation(fields: [fonteId], references: [id])
   fonteId Int
   data_coletado DateTime @default(now())
-  palavraChaves TextoPalavraChave[]
-  categoria Categoria? @relation(fields: [categoriaId], references: [id])
-  categoriaId Int?
+  textos_coletados_categorias TextosColetadosCategorias[]
 
   @@map("textos_coletados")
 }
@@ -58,9 +59,19 @@ model FonteInformacao {
 
 model TextoPalavraChave {
   id Int @id @default(autoincrement())
-  textoColetado TextoColetado @relation(fields: [textoColetadoId], references: [id])
-  textoColetadoId Int
   palavraChave String
+  categoria Categoria? @relation(fields: [categoriaId], references: [id])
+  categoriaId Int?
 
   @@map("textos_palavras_chave")
+}
+
+model TextosColetadosCategorias {
+  id Int @id @default(autoincrement())
+  textoColetado TextoColetado @relation(fields: [textoColetadoId], references: [id])
+  textoColetadoId Int
+  categoria Categoria @relation(fields: [categoriaId], references: [id])
+  categoriaId Int
+
+  @@map("textos_coletados_categorias")
 }
