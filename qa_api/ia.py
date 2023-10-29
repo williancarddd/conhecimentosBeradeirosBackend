@@ -8,26 +8,14 @@ nlp = pipeline("question-answering", model=model_name)
 @cache.memoize()
 def question_answer(question, context):
     result = nlp(question=question, context=context)
-    i = 0
 
-    answer = ""
+    context_sentences = context.split('. ')
 
-    while context[result["start"] - i] != '.':
-        if i > 200:
-            i = result["start"]
-            break
-        i += 1
+    answer = ''
 
-    answer += context[result["start"] - i + 2:result["start"]]
-    i = 0
-
-    while context[result["start"] + i] != '.':
-        if i > 200:
-            i = len(context) - result["start"]
-            break
-        i += 1
-
-    answer += context[result["start"]:result["start"] + i]
+    for sentence in context_sentences:
+        if result["answer"] in sentence:
+            answer = sentence
 
     return {
         "question": question,

@@ -16,10 +16,12 @@ db = Database(DB_PATH)
 
 def get_context(question, comunidade):
     keywords = db.get_keywords(comunidade)
+    print(keywords)
     for keyword in keywords:
         if keyword in unidecode(question.lower()):
             return db.get_context_from_keyword(keyword, comunidade)
         else:
+            print("geral")
             return db.get_context_from_categoria("Geral", comunidade)
 
 
@@ -44,6 +46,7 @@ def ask_question():
 
 
     if "categoria" not in data or data["categoria"] == "":
+        print("categoria not in data")
         context = get_context(question, comunidade)
     else:
         categorias = db.get_categorias(comunidade)
