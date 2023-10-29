@@ -17,7 +17,7 @@ model Comunidade {
   latitude Float?
   longitude Float?
   descricao String
-  populacao BigInt?
+  populacao Int?
   textos_coletados TextoColetado[]
 
   @@map("comunidades")

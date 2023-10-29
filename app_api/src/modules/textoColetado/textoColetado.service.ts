@@ -12,8 +12,12 @@ export class TextoColetadoService {
     return this.prisma.textoColetado.create({ data });
   }
 
-  async buscarTextoColetadoPorId(id: number): Promise<TextoColetado | null> {
-    return this.prisma.textoColetado.findUnique({ where: { id } });
+  async buscarTextoColetadoPorId(id: number): Promise<TextoColetado[] | null> {
+    return this.prisma.textoColetado.findMany({
+      where: {
+        comunidadeId: id,
+      },
+    });
   }
 
   async listarTextosColetados(): Promise<TextoColetado[]> {

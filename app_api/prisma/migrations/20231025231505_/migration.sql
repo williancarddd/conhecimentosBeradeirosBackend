@@ -5,7 +5,7 @@ CREATE TABLE "comunidades" (
     "latitude" REAL,
     "longitude" REAL,
     "descricao" TEXT NOT NULL,
-    "populacao" BIGINT
+    "populacao" INTEGER
 );
 
 -- CreateTable

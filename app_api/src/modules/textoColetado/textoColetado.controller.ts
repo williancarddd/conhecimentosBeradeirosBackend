@@ -22,7 +22,7 @@ export class TextoColetadoController {
   @Get(':id')
   async buscarTextoColetadoPorId(
     @Param('id') id: string,
-  ): Promise<TextoColetado | null> {
+  ): Promise<TextoColetado[] | null> {
     return this.textoColetadoService.buscarTextoColetadoPorId(+id);
   }
 
