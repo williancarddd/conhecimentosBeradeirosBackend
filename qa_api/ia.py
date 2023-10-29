@@ -31,5 +31,5 @@ def question_answer(question, context):
 
     return {
         "question": question,
-        "sentence": answer
+        "sentence": answer.replace("<sep>", ". ")
     }
