@@ -2,8 +2,8 @@
 CREATE TABLE "comunidades" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nome" TEXT NOT NULL,
-    "latitude" REAL,
-    "longitude" REAL,
+    "latitude" TEXT,
+    "longitude" TEXT,
     "descricao" TEXT NOT NULL,
     "populacao" INTEGER
 );

@@ -10,8 +10,8 @@ const seedData = async () => {
         nome: 'Comunidade de Nazaré',
         descricao:
           'Nazaré é um distrito rural do Município de Porto Velho (PVH) no estado de Rondônia. A comunidade está localizada às margens do Rio Madeira, em uma região popularmente conhecida como Baixo Madeira.',
-        latitude: 39.6122733,
-        longitude: -9.0284687,
+        latitude: '39.6122733',
+        longitude: '-9.0284687',
         populacao: 15000,
       },
     });
