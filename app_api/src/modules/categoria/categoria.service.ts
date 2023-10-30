@@ -6,12 +6,32 @@ import { PrismaService } from 'src/database/connections/prisma';
 export class CategoriaService {
   constructor(private prisma: PrismaService) {}
 
+  async criarMultiplasCategorias(data: {
+    id: number;
+    categorias: Array<string>;
+  }) {
+    return data.categorias.forEach((e) => {
+      this.prisma.categoria.create({
+        data: {
+          comunidadeId: data.id,
+          descricao: e,
+        },
+      });
+    });
+  }
+
   async criarCategoria(data: Prisma.CategoriaCreateInput): Promise<Categoria> {
     return this.prisma.categoria.create({ data });
   }
 
-  async buscarCategoriaPorId(id: number): Promise<Categoria | null> {
-    return this.prisma.categoria.findUnique({ where: { id } });
+  async buscarCategoriaPorIdComunidade(
+    id: number,
+  ): Promise<Categoria[] | null> {
+    return this.prisma.categoria.findMany({
+      where: {
+        comunidadeId: id,
+      },
+    });
   }
 
   async listarCategorias(): Promise<Categoria[]> {

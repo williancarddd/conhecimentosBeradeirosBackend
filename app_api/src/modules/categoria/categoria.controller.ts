@@ -22,13 +22,20 @@ export class CategoriaController {
   @Get(':id')
   async buscarCategoriaPorId(
     @Param('id') id: string,
-  ): Promise<Categoria | null> {
-    return this.categoriaService.buscarCategoriaPorId(+id);
+  ): Promise<Categoria[] | null> {
+    return this.categoriaService.buscarCategoriaPorIdComunidade(+id);
   }
 
   @Post()
   async criarCategoria(@Body() data: Categoria): Promise<Categoria> {
     return this.categoriaService.criarCategoria(data);
+  }
+
+  @Post('multi')
+  async criarMultCategoria(
+    @Body() data: { id: number; categorias: Array<string> },
+  ) {
+    return this.categoriaService.criarMultiplasCategorias(data);
   }
 
   @Put(':id')

@@ -20,6 +20,9 @@ const seedData = async () => {
     const categoria = await prisma.categoria.create({
       data: {
         descricao: 'História',
+        comunidade: {
+          connect: { id: comunidade.id },
+        },
       },
     });
 
@@ -39,11 +42,18 @@ const seedData = async () => {
         comunidade: {
           connect: { id: comunidade.id },
         },
-        categoria: {
-          connect: { id: categoria.id },
-        },
         fonteInformacao: {
           connect: { id: fonteInformacao.id },
+        },
+      },
+    });
+    await prisma.textosColetadosCategorias.create({
+      data: {
+        textoColetado: {
+          connect: { id: textoColetado.id },
+        },
+        categoria: {
+          connect: { id: categoria.id },
         },
       },
     });
@@ -54,8 +64,8 @@ const seedData = async () => {
       await prisma.textoPalavraChave.create({
         data: {
           palavraChave: palavra,
-          textoColetado: {
-            connect: { id: textoColetado.id },
+          categoria: {
+            connect: { id: categoria.id },
           },
         },
       });
