@@ -33,7 +33,7 @@ export class TextoPalavraChaveController {
     @Body() data: TextoPalavraChave,
   ): Promise<TextoPalavraChave> {
     return this.textoPalavraChaveService.criarTextoPalavraChave({
-      textoColetado: { connect: { id: data.textoColetadoId } },
+      categoria: { connect: { id: data.categoriaId } },
       palavraChave: data.palavraChave,
     });
   }

@@ -19,7 +19,7 @@ model Comunidade {
   descricao String
   populacao Int?
   textos_coletados TextoColetado[]
-
+  categoria Categoria[]
   @@map("comunidades")
 }
 
