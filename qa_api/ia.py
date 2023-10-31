@@ -2,7 +2,7 @@ from transformers import pipeline
 from api_settings import cache
 
 model_name = 'pierreguillou/bert-base-cased-squad-v1.1-portuguese'
-nlp = pipeline("question-answering", model=model_name)
+nlp = pipeline("question-answering", model=model_name, device=0)
 
 
 @cache.memoize()

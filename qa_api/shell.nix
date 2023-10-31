@@ -5,11 +5,7 @@ mkShell {
   name = "conhecimentosBeradeirosBackend";
 
   # Add executable packages to the nix-shell environment.
-  packages = with pkgs; [
-    python39
-    pyright
-    python39Packages.autopep8
-  ];
+  packages = with pkgs; [ python39 pyright ];
 
   shellHook = ''
     if [ $SHELL = '/usr/bin/fish' ]
